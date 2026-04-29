@@ -1,106 +1,84 @@
 # Real-Time Inventory & Supply Chain Tracker
 
-A high-performance, event-driven inventory tracking system built with Spring Boot, Apache Kafka, and Redis.
+A production-grade, event-driven inventory tracking system engineered for high performance and scalability. This system provides real-time stock monitoring across multiple warehouses using a modern microservices-ready architecture.
 
-## Features
+## 🚀 Key Features
 
-- **Real-Time Inventory Updates:** Event-driven architecture using Kafka for fast, decoupled stock updates.
-- **Cache-Aside Pattern:** Optimized reads using Redis caching to reduce database load.
-- **CSV Import Pipeline:** Batch processing of inventory data with tracking and rollback mechanisms.
-- **Audit Logging & Stock Alerts:** Asynchronous logging and alert generation.
-- **Robust REST API:** Full CRUD operations for Products, Warehouses, Inventory, and Transactions.
+*   **Real-Time Event Processing**: Utilizes **Apache Kafka** for decoupled, asynchronous stock updates and alert generation.
+*   **High-Performance Caching**: Implements the **Cache-Aside Pattern** with **Redis** to minimize database latency and handle high-traffic read requests.
+*   **Automated Stock Alerts**: Real-time monitoring of inventory levels with automated triggers when stock falls below minimum thresholds.
+*   **Scalable Data Pipeline**: Includes a robust CSV import engine for batch processing large sets of inventory data with built-in tracking.
+*   **Comprehensive Audit Logs**: Every critical action is asynchronously logged via Kafka to ensure a full traceability trail without impacting API performance.
 
-## Tech Stack
+## 🏗️ System Architecture
 
-- Java 17 / 21
-- Spring Boot 3.4.x
-- Apache Kafka (Event Bus)
-- Redis (Caching)
-- MySQL (Primary Storage)
-- Lombok
+The project follows a modern event-driven architecture designed to ensure data consistency and system resilience.
 
-## Getting Started
+### Components:
+1.  **Spring Boot API**: The core service handling REST requests and business logic.
+2.  **Apache Kafka**: The event backbone. It handles `inventory.update`, `stock.alert`, and `import.events` topics.
+3.  **Redis Cache**: Stores frequently accessed product and warehouse data to offload the primary database.
+4.  **MySQL**: The persistent system of record for all entities and transactions.
 
-### Prerequisites
+### Event Workflow:
+When a stock level is updated:
+1.  The **Inventory Service** updates the MySQL database.
+2.  An **InventoryUpdateEvent** is published to Kafka.
+3.  The **AuditLogConsumer** asynchronously picks up the event and records it in the audit logs.
+4.  If the quantity is below the threshold, a **StockAlertEvent** is triggered for immediate notification.
 
-- JDK 17 or 21 (If you're on a Mac using Java 25, you must run Gradle with a Java 21 `JAVA_HOME` path).
-- MySQL instance running on `localhost:3306` (or update `application.yml`).
-- Redis instance running on `localhost:6379`.
-- Kafka broker running on `localhost:9092`.
+## 🛠️ Tech Stack
 
-### Database Setup
+*   **Language**: Java 17 / 21
+*   **Framework**: Spring Boot 3.4.x (with Spring Data JPA & Spring Kafka)
+*   **Messaging**: Apache Kafka
+*   **Caching**: Redis
+*   **Database**: MySQL 8.0
+*   **Build Tool**: Gradle
 
-The project uses Hibernate `ddl-auto: update`, which automatically generates the schema based on the JPA models. 
+## 🚦 Getting Started
 
-Alternatively, if you prefer manual SQL initialization, you can use the `src/main/resources/schema.sql` file provided to create the tables. To have Spring Boot run this script automatically on startup, add the following to `application.yml`:
-```yaml
-spring:
-  sql:
-    init:
-      mode: always
-```
+### 1. Prerequisites
+*   **Docker Desktop** (for running the infrastructure)
+*   **JDK 21**
+*   **Postman** (for testing)
 
-### Building and Running
-
-You can start the application using the Gradle wrapper (or local Gradle installation):
-
+### 2. Launch Infrastructure
+Start the database, message broker, and caching engine:
 ```bash
-# Set your JAVA_HOME to Java 21 if needed, for example on Mac:
-# export JAVA_HOME=/opt/homebrew/opt/openjdk@21
-
-gradle bootRun
+docker-compose up -d
 ```
+This starts:
+- **MySQL**: port 3306
+- **Kafka**: port 9092
+- **Redis**: port 6380
+- **Kafka UI**: [http://localhost:8090](http://localhost:8090)
 
-Or build an executable jar:
-
+### 3. Run the Application
 ```bash
-gradle build
-java -jar build/libs/realtime-inventory-tracker-0.0.1-SNAPSHOT.jar
+export JAVA_HOME=/path/to/your/jdk21
+./gradlew bootRun
 ```
 
-## Architecture
+## 📖 API Documentation
 
-```text
-┌─────────────────────────────────────────────────────┐
-│                    CLIENT / UI                      │
-└───────────────────┬─────────────────────────────────┘
-                    │ REST API
-┌───────────────────▼─────────────────────────────────┐
-│             Spring Boot API Gateway                 │
-└──────┬──────────────┬───────────────┬───────────────┘
-       │              │               │
-┌──────▼─────┐ ┌──────▼─────┐ ┌──────▼──────┐
-│ Inventory  │ │  Warehouse │ │ CSV Import  │
-│  Service   │ │  Service   │ │  Service    │
-└──────┬─────┘ └──────┬─────┘ └──────┬──────┘
-       │              │               │
-       └──────────────▼───────────────┘
-                       │
-            ┌──────────▼──────────┐
-            │    Apache Kafka     │
-            │  (Event Bus)        │
-            └──────────┬──────────┘
-                       │
-          ┌────────────▼────────────┐
-          │   Kafka Consumers       │
-          └────────────┬────────────┘
-                       │
-        ┌──────────────┼──────────────┐
-┌───────▼──────┐ ┌─────▼──────┐ ┌────▼──────┐
-│    MySQL     │ │   Redis    │ │  GCP GKE  │
-└──────────────┘ └────────────┘ └───────────┘
-```
+The API is versioned (`/v1`) and follows RESTful principles.
 
-## API Endpoints (`/v1`)
+| Feature | Method | Endpoint | Description |
+| :--- | :--- | :--- | :--- |
+| **Auth** | POST | `/v1/auth/login` | Authenticate and get session |
+| **Products** | GET | `/v1/products` | List all available products |
+| **Warehouses**| GET | `/v1/warehouses` | List all warehouse locations |
+| **Inventory** | POST | `/v1/inventory` | Link a product to a warehouse |
+| **Inventory** | PATCH | `/v1/inventory/{id}/quantity` | Update stock level (triggers Kafka) |
+| **Transactions**| POST | `/v1/transactions` | Record a stock movement |
+| **Audit** | GET | `/v1/audit-logs` | View system-wide event logs |
+| **Import** | POST | `/v1/import/csv` | Batch upload inventory data |
 
-- `POST /v1/auth/login`
-- `GET /v1/products`
-- `GET /v1/warehouses`
-- `GET /v1/inventory`
-- `PATCH /v1/inventory/{id}/quantity`
-- `POST /v1/transactions`
-- `POST /v1/import/csv`
-
-*(See the `com.inventory.tracker.controller` package for a full list of endpoints).*
+## 🧪 Testing with Postman
+A pre-configured Postman collection is included in the root directory: `postman_collection.json`.
+1. Open Postman.
+2. Click **Import** and select the file.
+3. Ensure the **Postman Desktop Agent** is running to connect to `localhost:9000`.
 
 # realtime-inventory-tracker
