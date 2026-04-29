@@ -14,6 +14,20 @@ A production-grade, event-driven inventory tracking system engineered for high p
 
 The project follows a modern event-driven architecture designed to ensure data consistency and system resilience.
 
+```mermaid
+graph TD
+    Client[Client / Postman] -->|REST API| API[Spring Boot API]
+    API -->|Read/Write| DB[(MySQL)]
+    API -->|Cache-Aside| Redis[(Redis Cache)]
+    API -->|Publish Event| Kafka{Apache Kafka}
+    
+    Kafka -->|inventory.update| Audit[Audit Log Consumer]
+    Kafka -->|stock.alert| Alert[Alert Consumer]
+    
+    Audit -->|Save| DB
+    Alert -->|Save| DB
+```
+
 ### Components:
 1.  **Spring Boot API**: The core service handling REST requests and business logic.
 2.  **Apache Kafka**: The event backbone. It handles `inventory.update`, `stock.alert`, and `import.events` topics.
