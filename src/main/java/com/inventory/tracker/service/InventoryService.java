@@ -1,5 +1,8 @@
 package com.inventory.tracker.service;
 
+import com.inventory.tracker.exception.ResourceNotFoundException;
+import com.inventory.tracker.exception.InsufficientStockException;
+
 import com.inventory.tracker.dto.InventoryRequestDto;
 import com.inventory.tracker.dto.InventoryResponseDto;
 import com.inventory.tracker.kafka.producer.InventoryEventProducer;
@@ -91,7 +94,7 @@ public class InventoryService {
     public Inventory getInventoryById(Long id) {
         log.info("Fetching inventory from DB for ID: {}", id);
         return inventoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Inventory not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory not found with ID: " + id));
     }
 
     @Transactional
@@ -103,7 +106,7 @@ public class InventoryService {
         int newQuantity = inventory.getQuantity() + quantityChange;
         if (newQuantity < 0) {
             log.error("Insufficient stock for inventory id: {}", id);
-            throw new RuntimeException("Insufficient stock. Current: " + inventory.getQuantity() + ", Requested reduction: " + Math.abs(quantityChange));
+            throw new InsufficientStockException("Insufficient stock. Current: " + inventory.getQuantity() + ", Requested reduction: " + Math.abs(quantityChange));
         }
         
         inventory.setQuantity(newQuantity);

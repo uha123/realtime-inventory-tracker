@@ -1,4 +1,5 @@
 package com.inventory.tracker.service;
+import com.inventory.tracker.exception.ResourceNotFoundException;
 
 import com.inventory.tracker.dto.AuditLogResponseDto;
 import com.inventory.tracker.model.AuditLog;
@@ -27,7 +28,7 @@ public class AuditLogService {
     public AuditLogResponseDto getAuditLogById(Long id) {
         log.info("Fetching audit log by id: {}", id);
         AuditLog logEntity = auditLogRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Audit log not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Audit log not found"));
         return mapToDto(logEntity);
     }
 

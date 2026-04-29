@@ -1,4 +1,5 @@
 package com.inventory.tracker.service;
+import com.inventory.tracker.exception.ResourceNotFoundException;
 
 import com.inventory.tracker.dto.TransactionRequestDto;
 import com.inventory.tracker.dto.TransactionResponseDto;
@@ -35,7 +36,7 @@ public class TransactionService {
     public TransactionResponseDto getTransactionById(Long id) {
         log.info("Fetching transaction by id: {}", id);
         InventoryTransaction transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
         return mapToDto(transaction);
     }
 

@@ -1,4 +1,5 @@
 package com.inventory.tracker.service;
+import com.inventory.tracker.exception.ResourceNotFoundException;
 
 import com.inventory.tracker.dto.ImportJobResponseDto;
 import com.inventory.tracker.model.CsvImportJob;
@@ -48,14 +49,14 @@ public class ImportService {
     public ImportJobResponseDto getImportJobStatus(Long id) {
         log.info("Fetching import job status for id: {}", id);
         CsvImportJob job = importJobRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Import job not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Import job not found"));
         return mapToDto(job);
     }
 
     public void rollbackImportJob(Long id) {
         log.info("Rolling back import job id: {}", id);
         CsvImportJob job = importJobRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Import job not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Import job not found"));
                 
         job.setStatus(CsvImportJob.Status.FAILED); // Simulated rollback status change
         importJobRepository.save(job);

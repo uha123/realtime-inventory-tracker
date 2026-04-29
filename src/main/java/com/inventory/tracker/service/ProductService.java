@@ -1,5 +1,7 @@
 package com.inventory.tracker.service;
 
+import com.inventory.tracker.exception.ResourceNotFoundException;
+
 import com.inventory.tracker.dto.ProductRequestDto;
 import com.inventory.tracker.dto.ProductResponseDto;
 import com.inventory.tracker.model.Product;
@@ -29,7 +31,7 @@ public class ProductService {
     public ProductResponseDto getProductById(Long id) {
         log.info("Fetching product by id: {}", id);
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         return mapToDto(product);
     }
 
@@ -37,7 +39,7 @@ public class ProductService {
         log.info("Fetching product by sku: {}", sku);
         // Assuming findBySku exists in ProductRepository
         Product product = productRepository.findBySku(sku)
-                .orElseThrow(() -> new RuntimeException("Product not found with SKU: " + sku));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found with SKU: " + sku));
         return mapToDto(product);
     }
 
@@ -57,7 +59,7 @@ public class ProductService {
     public ProductResponseDto updateProduct(Long id, ProductRequestDto request) {
         log.info("Updating product id: {}", id);
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         
         product.setSku(request.getSku());
         product.setName(request.getName());

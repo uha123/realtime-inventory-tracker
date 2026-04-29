@@ -1,5 +1,7 @@
 package com.inventory.tracker.service;
 
+import com.inventory.tracker.exception.ResourceNotFoundException;
+
 import com.inventory.tracker.dto.WarehouseRequestDto;
 import com.inventory.tracker.dto.WarehouseResponseDto;
 import com.inventory.tracker.model.Warehouse;
@@ -29,7 +31,7 @@ public class WarehouseService {
     public WarehouseResponseDto getWarehouseById(Long id) {
         log.info("Fetching warehouse by id: {}", id);
         Warehouse warehouse = warehouseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Warehouse not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
         return mapToDto(warehouse);
     }
 
@@ -48,7 +50,7 @@ public class WarehouseService {
     public WarehouseResponseDto updateWarehouse(Long id, WarehouseRequestDto request) {
         log.info("Updating warehouse id: {}", id);
         Warehouse warehouse = warehouseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Warehouse not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
         
         warehouse.setName(request.getName());
         warehouse.setLocation(request.getLocation());
