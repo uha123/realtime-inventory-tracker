@@ -102,3 +102,5 @@ java -jar build/libs/realtime-inventory-tracker-0.0.1-SNAPSHOT.jar
 - `POST /v1/import/csv`
 
 *(See the `com.inventory.tracker.controller` package for a full list of endpoints).*
+
+# realtime-inventory-tracker
