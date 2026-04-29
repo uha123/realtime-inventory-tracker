@@ -147,6 +147,170 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Inventory",
+			"item": [
+				{
+					"name": "Create Inventory",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"warehouseId\": 1,\n    \"productId\": 1,\n    \"quantity\": 100,\n    \"minThreshold\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/v1/inventory",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"v1",
+								"inventory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Quantity (Patch)",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"quantity\": 150\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/v1/inventory/1/quantity",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"v1",
+								"inventory",
+								"1",
+								"quantity"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Inventory",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9000/v1/inventory",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"v1",
+								"inventory"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Transactions",
+			"item": [
+				{
+					"name": "Create Transaction",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"inventoryId\": 1,\n    \"quantity\": 5,\n    \"type\": \"SALE\",\n    \"reference\": \"ORDER-123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/v1/transactions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"v1",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Audit Logs & Alerts",
+			"item": [
+				{
+					"name": "Get All Audit Logs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9000/v1/audit-logs",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"v1",
+								"audit-logs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Alerts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9000/v1/alerts",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"v1",
+								"alerts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
