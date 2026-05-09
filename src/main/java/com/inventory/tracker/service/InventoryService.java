@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import com.inventory.tracker.constants.AppConstants;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,7 +91,7 @@ public class InventoryService {
         return mapToDto(inventoryRepository.save(inventory));
     }
 
-    @Cacheable(value = "inventory", key = "#id")
+    @Cacheable(value = AppConstants.CACHE_INVENTORY, key = "#id")
     public Inventory getInventoryById(Long id) {
         log.info("Fetching inventory from DB for ID: {}", id);
         return inventoryRepository.findById(id)
@@ -98,7 +99,7 @@ public class InventoryService {
     }
 
     @Transactional
-    @CachePut(value = "inventory", key = "#id")
+    @CachePut(value = AppConstants.CACHE_INVENTORY, key = "#id")
     public Inventory updateInventoryQuantity(Long id, Integer quantityChange) {
         log.info("Updating inventory quantity for id: {}, change: {}", id, quantityChange);
         Inventory inventory = getInventoryById(id);

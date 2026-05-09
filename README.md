@@ -22,12 +22,31 @@ The project follows a modern event-driven architecture designed to ensure data c
 3.  **Redis Cache**: Stores frequently accessed product and warehouse data to offload the primary database.
 4.  **MySQL**: The persistent system of record for all entities and transactions.
 
-### Event Workflow:
-When a stock level is updated:
-1.  The **Inventory Service** updates the MySQL database.
-2.  An **InventoryUpdateEvent** is published to Kafka.
-3.  The **AuditLogConsumer** asynchronously picks up the event and records it in the audit logs.
-4.  If the quantity is below the threshold, a **StockAlertEvent** is triggered for immediate notification.
+## 🌊 System Data Flows
+
+To help developers understand the core processes, here are the step-by-step flows for the primary operations:
+
+### 1. Real-Time Stock Update Flow
+When a stock level is updated (e.g., via `PATCH /v1/inventory/{id}/quantity`):
+1.  The **Inventory Service** receives the request and validates it.
+2.  The inventory record is updated in the **MySQL** database.
+3.  The relevant cache entries in **Redis** are evicted or updated to maintain data consistency.
+4.  An **InventoryUpdateEvent** is published to the `inventory.update` **Kafka** topic.
+5.  The **AuditLogConsumer** asynchronously picks up the event and records it in the system audit logs.
+6.  If the quantity falls below the minimum threshold, a **StockAlertEvent** is triggered and published for immediate notification.
+
+### 2. High-Performance Read Flow (Cache-Aside)
+When a client requests inventory or product data:
+1.  The API first checks **Redis** for the requested data.
+2.  **Cache Hit:** The data is returned immediately to the client.
+3.  **Cache Miss:** The API queries the **MySQL** database, stores the retrieved data in **Redis**, and then returns it.
+
+### 3. Batch CSV Import Flow
+When bulk inventory data is uploaded:
+1.  The **Import Service** receives the `MultipartFile`.
+2.  A tracking record (`CsvImportJob`) is saved in the database with a `PENDING` status, and a tracking ID is returned to the user immediately.
+3.  The file is processed asynchronously. The system reads the CSV stream, parsing and saving the inventory records.
+4.  The job progress is tracked, and finally marked as `COMPLETED` (or `FAILED`).
 
 ## 🛠️ Tech Stack
 

@@ -9,11 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.inventory.tracker.constants.AppConstants;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/inventory")
+@RequestMapping(AppConstants.API_V1_INVENTORY)
 @RequiredArgsConstructor
 public class InventoryController {
 

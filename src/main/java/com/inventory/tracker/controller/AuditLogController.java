@@ -5,11 +5,12 @@ import com.inventory.tracker.service.AuditLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.inventory.tracker.constants.AppConstants;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/audit-logs")
+@RequestMapping(AppConstants.API_V1_AUDIT_LOGS)
 @RequiredArgsConstructor
 public class AuditLogController {
 

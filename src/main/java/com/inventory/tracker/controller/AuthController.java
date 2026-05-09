@@ -5,9 +5,10 @@ import com.inventory.tracker.dto.AuthResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.inventory.tracker.constants.AppConstants;
 
 @RestController
-@RequestMapping("/v1/auth")
+@RequestMapping(AppConstants.API_V1_AUTH)
 public class AuthController {
 
     @PostMapping("/login")

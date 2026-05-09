@@ -104,7 +104,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"sku\": \"PROD-001\",\n    \"name\": \"Premium Laptop\",\n    \"category\": \"Electronics\",\n    \"unitPrice\": 1200.50\n}",
+							"raw": "{\n    \"sku\": \"PROD-{{$timestamp}}\",\n    \"name\": \"Premium Laptop\",\n    \"category\": \"Electronics\",\n    \"unitPrice\": 1200.50\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -243,7 +243,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"inventoryId\": 1,\n    \"quantity\": 5,\n    \"type\": \"SALE\",\n    \"reference\": \"ORDER-123\"\n}",
+							"raw": "{\n    \"inventoryId\": 1,\n    \"transactionType\": \"OUT\",\n    \"quantity\": 5,\n    \"reason\": \"Sale - ORDER-123\",\n    \"createdBy\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"

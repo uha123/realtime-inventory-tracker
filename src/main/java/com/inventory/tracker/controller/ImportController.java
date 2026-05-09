@@ -5,12 +5,13 @@ import com.inventory.tracker.service.ImportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.inventory.tracker.constants.AppConstants;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/import")
+@RequestMapping(AppConstants.API_V1_IMPORT)
 @RequiredArgsConstructor
 public class ImportController {
 
